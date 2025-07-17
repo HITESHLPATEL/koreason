@@ -1,0 +1,64 @@
+base_model: Qwen/Qwen3-1.7B
+
+
+load_in_8bit: false
+load_in_4bit: false
+
+datasets:
+  - path: train_ot3_ko_sampled.jsonl
+    type: chat_template
+
+dataset_prepared_path: preprocess
+val_set_size: 0.01
+output_dir: ./outputs
+dataloader_num_workers: 20
+
+adapter: 
+lora_model_dir:
+
+sequence_len: 16384
+sample_packing: false
+eval_sample_packing: false
+pad_to_sequence_len: false
+
+plugins:
+  - axolotl.integrations.liger.LigerPlugin
+liger_rope: true
+liger_rms_norm: true
+liger_swiglu: true
+liger_fused_linear_cross_entropy: true
+
+wandb_project: 
+wandb_entity:
+wandb_watch:
+wandb_name: 
+wandb_log_model:
+hub_model_id: 
+
+gradient_accumulation_steps: 64
+micro_batch_size: 1
+num_epochs: 5
+optimizer: adamw_torch_fused
+lr_scheduler: cosine
+learning_rate: 4e-5
+
+bf16: auto
+tf32: false
+
+gradient_checkpointing:
+resume_from_checkpoint:
+logging_steps: 1
+flash_attention: true
+
+warmup_ratio: 0.05
+weight_decay: 0.01
+evals_per_epoch: 0
+saves_per_epoch: 1
+
+fsdp:
+  - full_shard
+  - auto_wrap
+fsdp_config:
+  fsdp_state_dict_type: FULL_STATE_DICT
+  fsdp_transformer_layer_cls_to_wrap: Qwen3DecoderLayer
+  fsdp_activation_checkpointing: true
