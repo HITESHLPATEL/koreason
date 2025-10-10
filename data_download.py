@@ -22,14 +22,14 @@ def download_dataset_with_retry(repo_id, retries=5, delay=60):
             if e.response.status_code == 429:  # Rate-limited error
                 print("Rate limit hit! Waiting before retrying...")
                 time.sleep(delay)  # Wait before retrying
-                delay *= 2  # Exponential backoff: increase delay for next retry
+                delay *= 10  # Exponential backoff: increase delay for next retry
                 continue
             else:
                 raise e  # Raise other HTTP errors
         except Exception as e:
             print(f"An error occurred: {e}")
             time.sleep(delay)  # Wait before retrying
-            delay *= 2  # Exponential backoff
+            delay *= 10  # Exponential backoff
             continue
     print("Failed to download dataset after several attempts.")
     return None
